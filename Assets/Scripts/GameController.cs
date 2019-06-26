@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
     public int CarNumber = 1;
     public GameObject PrefabCar;
     public Transform Finish;
-
+    public Slider mutationRate;
+    public Slider mutationAmplitude;
+    public Text text_mutationRate;
+    public Text text_mutationAmplitude;
 
     public List<CarController> currentPopulation;
     public List<List<CarController>> allGenerations;
@@ -15,13 +19,11 @@ public class GameController : MonoBehaviour
     private List<CarController> newGeneration = new List<CarController>();
     private List<CarController> oldGeneration = new List<CarController>();
 
-    [Range(0f, 1f)]
-    public float mutationRate = 0.1f;
-    [Range(0f, 1f)]
-    public float mutationAmplitude = 0.1f;
-    public int genomeSize;
-    public int numberOfSurvivors;
-    public float cutoff = 0.3f;
+    private float _mutationRate;
+    private float _mutationAmplitude;
+
+
+    
 
     private GameObject[] countOnScreen;
 
@@ -92,7 +94,7 @@ public class GameController : MonoBehaviour
             {
                 for (int j = 0; j < survivors.Count; j++)
                 {
-                    CrossoverWithMutation(survivors[i], survivors[j], mutationAmplitude);
+                    CrossoverWithMutation(survivors[i], survivors[j], _mutationAmplitude);
                 }
 
                 if (currentPopulation.Count >= CarNumber)
@@ -117,6 +119,13 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+        _mutationRate = mutationRate.value;
+        text_mutationRate.text = _mutationRate.ToString();
+        _mutationAmplitude = mutationAmplitude.value;
+        text_mutationAmplitude.text = _mutationAmplitude.ToString();
+
+
         countOnScreen = GameObject.FindGameObjectsWithTag("Player");
 
         if (countOnScreen.Length == 0)
@@ -169,6 +178,7 @@ public class GameController : MonoBehaviour
 
     void CrossoverWithMutation(CarController parent1, CarController parent2, float mutationAmplitude)
     {
+        
         var car = Instantiate(PrefabCar, new Vector3(-0f, 0f, 0), Quaternion.identity);
         car.GetComponent<CarController>().target = Finish.position;
 
